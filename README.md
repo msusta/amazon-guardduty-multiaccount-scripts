@@ -35,7 +35,20 @@ Note: Account owners of member accounts will recieve an email for each region re
 
 If you do not have a common role that includes at least the above permissions you will need to create a role in each member account as well as the master account with at least the above permissions.  When creating the role ensure you use the same role name in every account and select the AmazonGuardDutyFullAccess managed policy.  You can use the EnableGuardDuty.yaml CloudFormation Template to automate this process, as the tempalte creates only global resources it can be created in any region.    
 
-* A CSV file that includes the list of accounts to be linked to the master account.  Accounts should be listed one per line in the format of AccountId,EmailAddress.  The EmailAddress must be the email associated with the root account.
+* Account list is a text file in CSV format
+    * CSV fields are separated by comma
+    * Don't include the header line
+    * Required fields are:
+        * AWS account ID - 12 digit number including leading zero(s)
+        * AWS account main email address (root user)
+    * Additional fields will be ignored
+    * Don't include the master account in the list
+
+Example file:
+```
+123456789012,some-aws-account@acme.org
+112233445566,john@doe.com
+```
 * Master AccountId which will recieve findings for all the linked accounts within the CSV file 
 
 ## Steps
@@ -82,8 +95,6 @@ If you do not have a common role that includes at least the above permissions yo
 
 ### 2. Execute Scripts
 #### 2a. Enable GuardDuty
-* Copy the required CSV file to this directory
-    * Should be in the formation of "AccountId,EmailAddress" with one AccountID and EmailAddress per line.
 
 ```
 usage: enableguardduty.py [-h] --master_account MASTER_ACCOUNT --assume_role
@@ -106,8 +117,6 @@ optional arguments:
 ```
     
 #### 2b. Disable GuardDuty
-* Copy the required CSV file to this directory
-    * Should be in the formation of "AccountId,EmailAddress,..."
 
 ```
 usage: disableguardduty.py [-h] --master_account MASTER_ACCOUNT --assume_role
